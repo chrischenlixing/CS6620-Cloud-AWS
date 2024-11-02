@@ -2,15 +2,8 @@ import boto3
 import os
 import time
 
-# Initialize resources
 dynamodb = boto3.resource('dynamodb')
-s3 = boto3.client('s3')
-
-# Environment variables
 table_name = os.environ['TABLE_NAME']
-destination_bucket = os.environ['DESTINATION_BUCKET_NAME']
-
-# DynamoDB table
 table = dynamodb.Table(table_name)
 
 def handler(event, context):
@@ -26,22 +19,13 @@ def handler(event, context):
             ExpressionAttributeValues={':val': 1, ':cutoff': cutoff_time}
         )
         
-        # Process each item
+        # Delete qualifying items from DynamoDB
         for item in response['Items']:
-            object_name = item['ObjectName']
-            copy_timestamp = item['CopyTimestamp']
-            copy_key = item['CopyKey']
-            
             try:
-                # Delete the item from DynamoDB
-                table.delete_item(Key={'ObjectName': object_name, 'CopyTimestamp': copy_timestamp})
-                
-                # Delete the corresponding object from S3
-                s3.delete_object(Bucket=destination_bucket, Key=copy_key)
-                print(f"Deleted object {object_name} with copy key {copy_key} from {destination_bucket} and DynamoDB.")
-            
+                # Remove the item from DynamoDB table
+                table.delete_item(Key={'ObjectName': item['ObjectName'], 'CopyTimestamp': item['CopyTimestamp']})
             except Exception as e:
-                print(f"Error processing item {item}: {e}")
+                print(f"Error deleting item {item}: {e}")
         
         # Pause for 5 seconds before the next iteration
-        time.sleep(5) 
+        time.sleep(5)

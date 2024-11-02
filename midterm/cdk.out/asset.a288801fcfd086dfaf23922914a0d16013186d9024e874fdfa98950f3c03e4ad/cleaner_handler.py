@@ -30,15 +30,14 @@ def handler(event, context):
         for item in response['Items']:
             object_name = item['ObjectName']
             copy_timestamp = item['CopyTimestamp']
-            copy_key = item['CopyKey']
             
             try:
                 # Delete the item from DynamoDB
                 table.delete_item(Key={'ObjectName': object_name, 'CopyTimestamp': copy_timestamp})
                 
                 # Delete the corresponding object from S3
-                s3.delete_object(Bucket=destination_bucket, Key=copy_key)
-                print(f"Deleted object {object_name} with copy key {copy_key} from {destination_bucket} and DynamoDB.")
+                s3.delete_object(Bucket=destination_bucket, Key=object_name)
+                print(f"Deleted object {object_name} from {destination_bucket} and DynamoDB.")
             
             except Exception as e:
                 print(f"Error processing item {item}: {e}")

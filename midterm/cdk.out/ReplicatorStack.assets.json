@@ -1,0 +1,19 @@
+{
+  "version": "38.0.1",
+  "files": {
+    "d155d0f3c1946fd6ef251b5a0a97dc81ea8849f0da348e97ed14445eefefc241": {
+      "source": {
+        "path": "ReplicatorStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "d155d0f3c1946fd6ef251b5a0a97dc81ea8849f0da348e97ed14445eefefc241.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

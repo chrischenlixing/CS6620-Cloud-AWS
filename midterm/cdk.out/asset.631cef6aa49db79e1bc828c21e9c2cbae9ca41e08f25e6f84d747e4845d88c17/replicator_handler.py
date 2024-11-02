@@ -1,8 +1,7 @@
 import boto3
 import os
 import time
-from urllib.parse import unquote_plus
-from botocore.exceptions import ClientError
+from urllib.parse import quote
 
 s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
@@ -15,16 +14,16 @@ def handler(event, context):
     print("Event received:", event)
     for record in event['Records']:
         event_name = record['eventName']
-        # URL-decode the object key
-        object_key = unquote_plus(record['s3']['object']['key'])
+        object_key = record['s3']['object']['key']
         
         if event_name.startswith('ObjectCreated'):
-            copy_key = f"{object_key}-copy"
-            copy_source = {'Bucket': record['s3']['bucket']['name'], 'Key': object_key}
+            copy_key = f"/{object_key}-copy"
+            encoded_object_key = f"/{object_key}"
+            copy_source = {'Bucket': record['s3']['bucket']['name'], 'Key': encoded_object_key}
             
             print(f"Attempting to copy {object_key} to {copy_key}")
             print(f"Copy source: {copy_source}")
-    
+
             # Retry mechanism
             max_retries = 3
             retry_delay = 2  # seconds
@@ -48,18 +47,14 @@ def handler(event, context):
                     
                     print(f"Copy succeeded on attempt {attempt + 1}")
                     break  # Exit the retry loop on success
-    
-                except ClientError as e:
-                    if e.response['Error']['Code'] == 'NoSuchKey':
-                        print(f"NoSuchKey error on attempt {attempt + 1}: {e}")
-                        time.sleep(retry_delay)  # Wait before retrying
-                    else:
-                        print(f"An unexpected ClientError occurred: {e}")
-                        break  # Stop retrying on other exceptions
+
+                except s3.exceptions.NoSuchKey as e:
+                    print(f"NoSuchKey error on attempt {attempt + 1}: {e}")
+                    time.sleep(retry_delay)  # Wait before retrying
                 except Exception as e:
                     print(f"An unexpected error occurred: {e}")
                     break  # Stop retrying on other exceptions
-    
+
         elif event_name.startswith('ObjectRemoved'):
             response = table.query(
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('ObjectName').eq(object_key)
