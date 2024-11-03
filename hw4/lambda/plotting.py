@@ -1,12 +1,13 @@
-import boimport boto3
+import boto3
+import os
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
 dynamodb = boto3.resource('dynamodb')
 s3_client = boto3.client('s3')
-table_name = 'S3_object_size_history'
-bucket_name = 'lixingchenassignment3'
-plot_bucket = 'plotbucket1'
+table_name = os.getenv('DYNAMODB_TABLE_NAME')
+bucket_name = os.getenv('BUCKET_NAME')
+plot_bucket = os.getenv('PLOT_BUCKET_NAME')
 
 def query_size_history():
     table = dynamodb.Table(table_name)
@@ -15,7 +16,7 @@ def query_size_history():
     
     # Continuously query the last 10 seconds of data
     response = table.query(
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('BucketName').eq(bucket_name) &
+        KeyConditionExpression=boto3.dynamodb.conditions.Key('BucketName').eq(bucket_name) & 
         boto3.dynamodb.conditions.Key('Timestamp').between(ten_seconds_ago, int(now.timestamp()))
     )
     return response['Items']
@@ -26,8 +27,8 @@ def get_max_size():
         ProjectionExpression='TotalSize',
         FilterExpression=boto3.dynamodb.conditions.Key('BucketName').eq(bucket_name)
     )
-    if not response['Items']:
-        return 0
+    if not response['Items']: 
+        return 0  
     
     max_size = max(item['TotalSize'] for item in response['Items'])
     return max_size
@@ -45,7 +46,7 @@ def plot_size_history(size_data, max_size):
     plt.tight_layout()       # Adjust layout to prevent label cutoff
     plt.legend()
     
-    plt.savefig('/tmp/plot.png')
+    plt.savefig('/tmp/plot.png') 
 
 def upload_plot_to_s3():
     with open('/tmp/plot.png', 'rb') as f:
@@ -62,3 +63,4 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': 'Plotting Lambda executed successfully, plot uploaded to S3.'
     }
+

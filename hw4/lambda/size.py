@@ -1,11 +1,12 @@
 import boto3
 from datetime import datetime
+import os
 
 # Initialize clients
 s3_client = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
-bucket_name = 'lixingchenassignment3'
-table_name = 'S3_object_size_history'
+bucket_name = os.environ['BUCKET_NAME']
+table_name = os.environ['DYNAMODB_TABLE_NAME']
 
 def calculate_bucket_size():
     # Get the list of objects in the bucket
@@ -36,3 +37,15 @@ def write_size_to_dynamodb(total_size, object_count):
             'ObjectCount': object_count
         }
     )
+
+def lambda_handler(event, context):
+    # Calculate the total size and object count of the bucket
+    total_size, object_count = calculate_bucket_size()
+
+    # Write the data to DynamoDB
+    write_size_to_dynamodb(total_size, object_count)
+
+    return {
+        'statusCode': 200,
+        'body': 'Size tracking Lambda executed successfully.'
+    }

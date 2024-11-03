@@ -22,7 +22,7 @@ def delete_object(object_name):
 
 
 def call_plotting_api():
-    api_url = 'https://hybv84t8h6.execute-api.us-west-1.amazonaws.com/default/plotting_function'
+    api_url = 'https://mldfcj19u3.execute-api.us-west-1.amazonaws.com/default/plotting_function'
     
     http = urllib3.PoolManager()
     response = http.request('POST', api_url)
