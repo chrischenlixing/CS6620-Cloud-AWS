@@ -15,6 +15,7 @@ def handler(event, context):
     print("Event received:", event)
     for record in event['Records']:
         event_name = record['eventName']
+        # URL-decode the object key
         object_key = unquote_plus(record['s3']['object']['key'])
         
         if event_name.startswith('ObjectCreated'):
@@ -22,18 +23,24 @@ def handler(event, context):
             copy_source = {'Bucket': record['s3']['bucket']['name'], 'Key': object_key}
             
             print(f"Attempting to copy {object_key} to {copy_key}")
+            print(f"Copy source: {copy_source}")
             
-            # Check if there is an existing record in DynamoDB for this copy
-            response = table.query(
-                KeyConditionExpression=boto3.dynamodb.conditions.Key('ObjectName').eq(object_key)
-            )
-            existing_items = [
-                item for item in response.get('Items', [])
-                if item.get('CopyKey') == copy_key
-            ]
-            
-            if existing_items:
-                # Delete existing object in the destination bucket
+            # Check if the object already exists in the destination bucket
+            object_exists = False
+            try:
+                s3.head_object(Bucket=bucket_dst, Key=copy_key)
+                object_exists = True
+                print(f"Object {copy_key} already exists in destination bucket")
+            except ClientError as e:
+                if e.response['Error']['Code'] == '404':
+                    object_exists = False
+                    print(f"Object {copy_key} does not exist in destination bucket")
+                else:
+                    print(f"Error checking for object existence: {e}")
+                    raise
+
+            if object_exists:
+                # Delete the existing object in the destination bucket
                 try:
                     s3.delete_object(Bucket=bucket_dst, Key=copy_key)
                     print(f"Deleted existing object {copy_key} from destination bucket")
@@ -41,26 +48,31 @@ def handler(event, context):
                     print(f"Error deleting existing object: {e}")
                     raise
 
-                # Delete items from DynamoDB
-                for item in existing_items:
-                    try:
-                        table.delete_item(
-                            Key={
-                                'ObjectName': item['ObjectName'],
-                                'CopyTimestamp': item['CopyTimestamp']
-                            }
-                        )
-                        print(f"Deleted existing item from DynamoDB for {copy_key}")
-                    except ClientError as e:
-                        print(f"Error deleting item from DynamoDB: {e}")
-                        raise
+                # Delete existing items from DynamoDB
+                response = table.query(
+                    KeyConditionExpression=boto3.dynamodb.conditions.Key('ObjectName').eq(object_key)
+                )
+                items = response.get('Items', [])
+                for item in items:
+                    if item.get('CopyKey') == copy_key:
+                        try:
+                            table.delete_item(
+                                Key={
+                                    'ObjectName': item['ObjectName'],
+                                    'CopyTimestamp': item['CopyTimestamp']
+                                }
+                            )
+                            print(f"Deleted existing item from DynamoDB for {copy_key}")
+                        except ClientError as e:
+                            print(f"Error deleting item from DynamoDB: {e}")
+                            raise
 
             # Retry mechanism
             max_retries = 3
             retry_delay = 2  # seconds
             for attempt in range(max_retries):
                 try:
-                    # Copy the object to the destination bucket
+                    # Attempt to copy the object
                     s3.copy_object(
                         Bucket=bucket_dst,
                         CopySource=copy_source,

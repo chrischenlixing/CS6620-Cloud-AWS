@@ -53,7 +53,7 @@ class StorageStack(Stack):
 
         self.replicator_lambda.add_to_role_policy(
             iam.PolicyStatement(
-                actions=['s3:GetObject', 's3:ListBucket'],
+                actions=['s3:GetObject', 's3:ListBucket', 's3:PutObject', 's3:DeleteObject','s3:HeadObject'],
                 resources=[self.bucket_src.bucket_arn, f"{self.bucket_src.bucket_arn}/*"]
             )
         )

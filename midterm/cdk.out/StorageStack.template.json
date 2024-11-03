@@ -267,11 +267,14 @@
       },
       {
        "Action": [
+        "s3:DeleteObject",
         "s3:GetBucket*",
         "s3:GetObject",
         "s3:GetObject*",
+        "s3:HeadObject",
         "s3:List*",
-        "s3:ListBucket"
+        "s3:ListBucket",
+        "s3:PutObject"
        ],
        "Effect": "Allow",
        "Resource": [
@@ -318,7 +321,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "f3021841cc0e1fb51a24cc76ebda97ae4fb9185ec34dbb64b8755410e42345e2.zip"
+     "S3Key": "e65432b28798d413349dfce02a45f6c7ea5ec293a4207b9d2072545a480bd411.zip"
     },
     "Environment": {
      "Variables": {
@@ -349,7 +352,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "StorageStack/ReplicatorLambda/Resource",
-    "aws:asset:path": "asset.f3021841cc0e1fb51a24cc76ebda97ae4fb9185ec34dbb64b8755410e42345e2",
+    "aws:asset:path": "asset.e65432b28798d413349dfce02a45f6c7ea5ec293a4207b9d2072545a480bd411",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
