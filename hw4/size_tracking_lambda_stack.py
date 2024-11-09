@@ -1,40 +1,47 @@
-from aws_cdk import Stack, Duration, aws_events as events, aws_events_targets as targets
+from aws_cdk import Stack, Duration
+from aws_cdk.aws_s3 import Bucket, EventType
+from aws_cdk.aws_s3_notifications import LambdaDestination
+from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_lambda import Function, Runtime, Code
 from constructs import Construct
-from dynamodb_stack import DynamoDBStack
-from s3_stack import S3Stack
 
 class SizeTrackingLambdaStack(Stack):
-    def __init__(self, scope: Construct, id: str, dynamodb_stack: DynamoDBStack, s3_stack: S3Stack, **kwargs):
+    def __init__(self, scope: Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        # Size Tracking Lambda
+        # Create S3 Bucket
+        self.bucket = Bucket(self, "Assignment3Bucket")
+
+        # Create DynamoDB Table
+        self.table = Table(self, "TrackingTable",
+            partition_key=Attribute(name="BucketName", type=AttributeType.STRING),
+            sort_key=Attribute(name="Timestamp", type=AttributeType.NUMBER),
+            billing_mode=BillingMode.PAY_PER_REQUEST
+        )
+
+        # Create Size Tracking Lambda
         self.size_tracking_lambda = Function(
             self, "SizeTrackingLambda",
             runtime=Runtime.PYTHON_3_8,
             handler="size.lambda_handler",
-            timeout=Duration.seconds(300), 
-            code=Code.from_asset("lambda"), 
+            timeout=Duration.seconds(300),
+            code=Code.from_asset("lambda"),
             environment={
-                'DYNAMODB_TABLE_NAME': dynamodb_stack.table.table_name,
-                'BUCKET_NAME': s3_stack.bucket_name
+                'DYNAMODB_TABLE_NAME': self.table.table_name,
+                'BUCKET_NAME': self.bucket.bucket_name
             }
         )
 
-        # Grant S3 and DynamoDB permissions
-        s3_stack.bucket.grant_read_write(self.size_tracking_lambda)
-        s3_stack.plottedBucket.grant_read_write(self.size_tracking_lambda)
-        dynamodb_stack.table.grant_read_write_data(self.size_tracking_lambda)
+        # Grant Lambda permissions to access S3 and DynamoDB
+        self.bucket.grant_read_write(self.size_tracking_lambda)
+        self.table.grant_read_write_data(self.size_tracking_lambda)
 
-        # Define EventBridge rule to trigger Lambda on S3 PUT and DELETE events
-        s3_event_rule = events.Rule(
-            self, "S3EventRule",
-            event_pattern={
-                "source": ["aws.s3"],
-                "detail_type": ["Object Created", "Object Removed"],
-                "resources": [s3_stack.bucket.bucket_arn]
-            }
+        # Add S3 bucket event notifications to trigger the Size Tracking Lambda
+        self.bucket.add_event_notification(
+            EventType.OBJECT_CREATED,
+            LambdaDestination(self.size_tracking_lambda)
         )
-
-        # Add the Size Tracking Lambda function as a target for the EventBridge rule
-        s3_event_rule.add_target(targets.LambdaFunction(self.size_tracking_lambda))
+        self.bucket.add_event_notification(
+            EventType.OBJECT_REMOVED,
+            LambdaDestination(self.size_tracking_lambda)
+        )
