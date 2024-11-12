@@ -112,7 +112,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "9d0fa0a8517ffb6a4c15ed7abbb5561201a240c5af550b72b1f75cec2f6e5ac4.zip"
+     "S3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
     },
     "Environment": {
      "Variables": {
@@ -161,7 +161,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DriverLambdaStack/DriverLambda/Resource",
-    "aws:asset:path": "asset.9d0fa0a8517ffb6a4c15ed7abbb5561201a240c5af550b72b1f75cec2f6e5ac4",
+    "aws:asset:path": "asset.ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

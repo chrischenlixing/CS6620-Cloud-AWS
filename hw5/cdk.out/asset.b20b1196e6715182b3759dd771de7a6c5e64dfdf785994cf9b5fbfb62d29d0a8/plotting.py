@@ -20,8 +20,7 @@ def query_size_history():
     table = dynamodb.Table(table_name)
     now = int(time.time())
     ten_seconds_ago = now - 10
-    print(type(now), type(ten_seconds_ago))
-    print(type(bucket_name))
+
     response = table.query(
         KeyConditionExpression=boto3.dynamodb.conditions.Key('BucketName').eq(bucket_name) & 
                                boto3.dynamodb.conditions.Key('Timestamp').between(ten_seconds_ago, now)

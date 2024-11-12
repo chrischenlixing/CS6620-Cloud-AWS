@@ -17,6 +17,14 @@ def lambda_handler(event, context):
         s3_client.put_object(Bucket=bucket_name, Key=object_name, Body=content)
         print(f"Object '{object_name}' created with content: {content}")
 
+    def update_object(object_name, content):
+        s3_client.put_object(Bucket=bucket_name, Key=object_name, Body=content)
+        print(f"Object '{object_name}' updated with content: {content}")
+
+    def delete_object(object_name):
+        s3_client.delete_object(Bucket=bucket_name, Key=object_name)
+        print(f"Object '{object_name}' deleted.")
+
     def call_plotting_api():
         if not api_url:
             print("Error: PLOTTING_API_URL is not set.")
@@ -26,20 +34,19 @@ def lambda_handler(event, context):
         response = http.request('POST', api_url)
         print("Plotting API invoked:", response.status)
 
-    # Operations as per requirements
-    # Step 1: Create assignment1.txt (19 bytes)
+    # Operations
     create_object('assignment1.txt', 'Empty Assignment 1')
-    time.sleep(5)  # Wait to allow the metric to update and potentially trigger an alarm
+    time.sleep(2)
 
-    # Step 2: Create assignment2.txt (28 bytes)
-    create_object('assignment2.txt', 'Empty Assignment 2222222222')
-    time.sleep(5)  # Wait for alarm and Cleaner Lambda to delete assignment2.txt
+    update_object('assignment1.txt', 'Empty Assignment 2222222222')
+    time.sleep(2)
 
-    # Step 3: Create assignment3.txt (2 bytes)
-    create_object('assignment3.txt', '33')
-    time.sleep(5)  # Wait for alarm and Cleaner Lambda to delete assignment1.txt
+    delete_object('assignment1.txt')
+    time.sleep(2)
 
-    # Step 4: Call the plotting API
+    create_object('assignment2.txt', '33')
+    time.sleep(2)
+    
     call_plotting_api()
 
     return {

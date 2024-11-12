@@ -14,14 +14,12 @@ dynamodb = boto3.resource('dynamodb')
 s3_client = boto3.client('s3')
 table_name = os.getenv('DYNAMODB_TABLE_NAME')
 bucket_name = os.getenv('BUCKET_NAME')
-plot_bucket_name = os.getenv('PLOT_BUCKET_NAME')
 
 def query_size_history():
     table = dynamodb.Table(table_name)
     now = int(time.time())
     ten_seconds_ago = now - 10
-    print(type(now), type(ten_seconds_ago))
-    print(type(bucket_name))
+
     response = table.query(
         KeyConditionExpression=boto3.dynamodb.conditions.Key('BucketName').eq(bucket_name) & 
                                boto3.dynamodb.conditions.Key('Timestamp').between(ten_seconds_ago, now)
@@ -64,7 +62,7 @@ def plot_size_history(size_data, max_size):
 
 def upload_plot_to_s3(buf):
     plot_key = 'plot.png'
-    s3_client.put_object(Bucket=plot_bucket_name, Key=plot_key, Body=buf, ContentType='image/png')
+    s3_client.put_object(Bucket=bucket_name, Key=plot_key, Body=buf, ContentType='image/png')
 
 def lambda_handler(event, context):
     size_data = query_size_history()
