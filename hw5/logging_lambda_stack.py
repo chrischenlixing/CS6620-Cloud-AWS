@@ -14,6 +14,7 @@ from aws_cdk.aws_sns_subscriptions import SqsSubscription
 from aws_cdk.aws_s3 import Bucket
 from constructs import Construct
 import aws_cdk.aws_lambda as lambda_
+from aws_cdk.aws_sns_subscriptions import LambdaSubscription
 
 class LoggingLambdaStack(Stack):
     def __init__(self, scope: Construct, id: str, sns_topic: Topic, s3_bucket: Bucket, **kwargs):
@@ -69,6 +70,12 @@ class LoggingLambdaStack(Stack):
         s3_bucket.grant_read_write(self.cleaner_lambda)
         s3_bucket.grant_delete(self.cleaner_lambda)
 
+        # Create an SNS topic specifically for triggering the CleanerLambda
+        alarm_topic = Topic(self, "AlarmTopic")
+
+        # Subscribe the CleanerLambda to the SNS topic
+        alarm_topic.add_subscription(LambdaSubscription(self.cleaner_lambda))
+
         # Create CloudWatch Alarm based on the TotalObjectSize metric
         self.size_threshold_alarm = cloudwatch.Alarm(
             self, "SizeThresholdAlarm",
@@ -76,14 +83,14 @@ class LoggingLambdaStack(Stack):
                 namespace="Assignment4App",
                 metric_name="TotalObjectSize",
                 statistic="Sum",
-                period=Duration.minutes(1),
+                period=Duration.seconds(10),  
             ),
             threshold=15,
-            evaluation_periods=1
+            evaluation_periods=1,
+            treat_missing_data=cloudwatch.TreatMissingData.NOT_BREACHING  # Ignore missing data for immediate triggering
         )
-
 
         # Add Cleaner Lambda as an action to the alarm using custom action
         self.size_threshold_alarm.add_alarm_action(
-            actions.LambdaAction(self.cleaner_lambda)
+            actions.SnsAction(alarm_topic)
         )

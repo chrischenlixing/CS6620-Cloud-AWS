@@ -136,7 +136,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+     "S3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
     },
     "Environment": {
      "Variables": {
@@ -170,7 +170,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "PlottingLambdaStack/PlottingLambda/Resource",
-    "aws:asset:path": "asset.ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b",
+    "aws:asset:path": "asset.f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

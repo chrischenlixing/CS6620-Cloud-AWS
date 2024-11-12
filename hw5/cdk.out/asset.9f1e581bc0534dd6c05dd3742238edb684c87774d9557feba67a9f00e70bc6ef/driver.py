@@ -37,7 +37,7 @@ def lambda_handler(event, context):
 
     # Step 3: Create assignment3.txt (2 bytes)
     create_object('assignment3.txt', '33')
-    time.sleep(3)  # Wait for alarm and Cleaner Lambda to delete assignment1.txt
+    time.sleep(20)  # Wait for alarm and Cleaner Lambda to delete assignment1.txt
 
     # Step 4: Call the plotting API
     call_plotting_api()

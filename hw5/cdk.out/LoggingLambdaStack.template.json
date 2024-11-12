@@ -177,7 +177,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+     "S3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
     },
     "Environment": {
      "Variables": {
@@ -202,7 +202,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "LoggingLambdaStack/LoggingLambda/Resource",
-    "aws:asset:path": "asset.ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b",
+    "aws:asset:path": "asset.f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -371,7 +371,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+     "S3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
     },
     "Environment": {
      "Variables": {
@@ -396,12 +396,12 @@
    ],
    "Metadata": {
     "aws:cdk:path": "LoggingLambdaStack/CleanerLambda/Resource",
-    "aws:asset:path": "asset.ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b",
+    "aws:asset:path": "asset.f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
   },
-  "CleanerLambdaSizeThresholdAlarmAlarmPermissionFF90CEE0": {
+  "CleanerLambdaAllowInvokeLoggingLambdaStackAlarmTopic59E1CA03A2168572": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
     "Action": "lambda:InvokeFunction",
@@ -411,19 +411,37 @@
       "Arn"
      ]
     },
-    "Principal": "lambda.alarms.cloudwatch.amazonaws.com",
-    "SourceAccount": {
-     "Ref": "AWS::AccountId"
-    },
+    "Principal": "sns.amazonaws.com",
     "SourceArn": {
-     "Fn::GetAtt": [
-      "SizeThresholdAlarmA59B2C9B",
-      "Arn"
-     ]
+     "Ref": "AlarmTopicD01E77F9"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "LoggingLambdaStack/CleanerLambda/SizeThresholdAlarmAlarmPermission"
+    "aws:cdk:path": "LoggingLambdaStack/CleanerLambda/AllowInvoke:LoggingLambdaStackAlarmTopic59E1CA03"
+   }
+  },
+  "CleanerLambdaAlarmTopicECCC6A23": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": {
+     "Fn::GetAtt": [
+      "CleanerLambdaADF65AF3",
+      "Arn"
+     ]
+    },
+    "Protocol": "lambda",
+    "TopicArn": {
+     "Ref": "AlarmTopicD01E77F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LoggingLambdaStack/CleanerLambda/AlarmTopic/Resource"
+   }
+  },
+  "AlarmTopicD01E77F9": {
+   "Type": "AWS::SNS::Topic",
+   "Metadata": {
+    "aws:cdk:path": "LoggingLambdaStack/AlarmTopic/Resource"
    }
   },
   "SizeThresholdAlarmA59B2C9B": {
@@ -431,19 +449,17 @@
    "Properties": {
     "AlarmActions": [
      {
-      "Fn::GetAtt": [
-       "CleanerLambdaADF65AF3",
-       "Arn"
-      ]
+      "Ref": "AlarmTopicD01E77F9"
      }
     ],
     "ComparisonOperator": "GreaterThanOrEqualToThreshold",
     "EvaluationPeriods": 1,
     "MetricName": "TotalObjectSize",
     "Namespace": "Assignment4App",
-    "Period": 60,
+    "Period": 10,
     "Statistic": "Sum",
-    "Threshold": 15
+    "Threshold": 15,
+    "TreatMissingData": "notBreaching"
    },
    "Metadata": {
     "aws:cdk:path": "LoggingLambdaStack/SizeThresholdAlarm/Resource"
@@ -452,7 +468,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21QQW7DIBB8S+5429Rq1GtiJb00kms/ICKYOFtjcFmoFSH/vQK3bg69MDM7szDiCdabZ3hc8ZEy0XSZwjOE2nHRMT7SKdAnQXj30ktWXPRM0lkaheK2DGc5MdIEofZnEhYHh0bHxL2emOL9ueEQDl6L38TC919Su9p4K+SRDwPqNtr/T0tpeyRKlyLvIVRGpZoJ/wou3fITJ5KOYBuBUQ47LzrpdpwkU6YlCG+mfbXGD3Fv4UfpLIoDKidtNO71xIQyvhm5E1cIW8VtHyOJTBOrJKXaLD1ZO97+lF+M4qILoxucP6e8uavRDzm8wHqz+iDEzHrtsJdQzfgNoXSzRrIBAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21PTU/DMAz9LbunhlExcd0mxoVJpeU+pWnWmaZJiROqKep/R0mhgMQl78uWX+5gvbmH2xUfKRNNlymsIVSOi47xkU6B3gnCi5desv1ZzyS9hVEoros5y4mRJgiVr0lYHBwaHSf+6FczoIhuIhNTvK8bDuHgtfheWPjjh9SuMt4KeeTDgLqN8f9uIW2PRGj0xJD3EEqjUuuEP32XqvmJE0lHsI3AKIedF510O06SKdMShGfTPlnjh7i38KN0FsUBlZM2Br/1xIQyvhm5ExcIW8VtH0cSmSZWSkq1WTpZOd5+lV+C/VnvjW7QpX8UV3cx+iaHB1hvVm+EmFmvHfYSyhk/AROmLPXBAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "LoggingLambdaStack/CDKMetadata/Default"

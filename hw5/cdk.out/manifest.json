@@ -140,7 +140,7 @@
         "notificationArns": [],
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7db5a8e19bebbdbfeb239dab25f3bdf5018f9b7e604ff16fbf71e89f95fd85bd.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f9d1409c95e8871b98bd7e97763d793bd39eff793d12583022ad7f9a64b7c441.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -262,7 +262,7 @@
         "notificationArns": [],
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/272422797fcb387e84c3e27aa92f2f0050a39300f2ba5bb2128ca717ee7275a4.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/19de513417fc4fb8af375d131cea1a7b5720026314f47f4b8fc4b68059a38523.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -483,7 +483,7 @@
         "notificationArns": [],
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/5182abfbe5d97127aa341dfef24aa6b3d88641596f3d575d8ce267c5bcb05169.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/063c6daabe6d62e7b3b47c1d224dd8fa323819596b960a1e15dc8127c0017ae9.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -564,7 +564,7 @@
         "notificationArns": [],
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/75ddb213a3dce794ae823c2c5f7d0c9809f890c6d764f264854109b4421deb66.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e22ce455ae409ad62e79159facd85fbc361655e7fab467ad132db60a7c492134.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -653,10 +653,22 @@
             "data": "CleanerLambdaADF65AF3"
           }
         ],
-        "/LoggingLambdaStack/CleanerLambda/SizeThresholdAlarmAlarmPermission": [
+        "/LoggingLambdaStack/CleanerLambda/AllowInvoke:LoggingLambdaStackAlarmTopic59E1CA03": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "CleanerLambdaSizeThresholdAlarmAlarmPermissionFF90CEE0"
+            "data": "CleanerLambdaAllowInvokeLoggingLambdaStackAlarmTopic59E1CA03A2168572"
+          }
+        ],
+        "/LoggingLambdaStack/CleanerLambda/AlarmTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaAlarmTopicECCC6A23"
+          }
+        ],
+        "/LoggingLambdaStack/AlarmTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmTopicD01E77F9"
           }
         ],
         "/LoggingLambdaStack/SizeThresholdAlarm/Resource": [

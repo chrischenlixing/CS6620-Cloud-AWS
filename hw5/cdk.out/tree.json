@@ -692,7 +692,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+                      "s3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1064,7 +1064,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+                      "s3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1719,7 +1719,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+                      "s3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -2114,7 +2114,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+                      "s3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -2423,7 +2423,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ae319b6f4468f708d0ca1b22a8cd25d996117080b988fb3c92c098b0cafaaf5b.zip"
+                      "s3Key": "f59b43dd9f5113249c7cb7dd89c578d70b0cac4d66f72c58e2167fab175610a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -2448,9 +2448,9 @@
                   "version": "2.165.0"
                 }
               },
-              "SizeThresholdAlarmAlarmPermission": {
-                "id": "SizeThresholdAlarmAlarmPermission",
-                "path": "LoggingLambdaStack/CleanerLambda/SizeThresholdAlarmAlarmPermission",
+              "AllowInvoke:LoggingLambdaStackAlarmTopic59E1CA03": {
+                "id": "AllowInvoke:LoggingLambdaStackAlarmTopic59E1CA03",
+                "path": "LoggingLambdaStack/CleanerLambda/AllowInvoke:LoggingLambdaStackAlarmTopic59E1CA03",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
                   "aws:cdk:cloudformation:props": {
@@ -2461,15 +2461,9 @@
                         "Arn"
                       ]
                     },
-                    "principal": "lambda.alarms.cloudwatch.amazonaws.com",
-                    "sourceAccount": {
-                      "Ref": "AWS::AccountId"
-                    },
+                    "principal": "sns.amazonaws.com",
                     "sourceArn": {
-                      "Fn::GetAtt": [
-                        "SizeThresholdAlarmA59B2C9B",
-                        "Arn"
-                      ]
+                      "Ref": "AlarmTopicD01E77F9"
                     }
                   }
                 },
@@ -2477,10 +2471,65 @@
                   "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
                   "version": "2.165.0"
                 }
+              },
+              "AlarmTopic": {
+                "id": "AlarmTopic",
+                "path": "LoggingLambdaStack/CleanerLambda/AlarmTopic",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "LoggingLambdaStack/CleanerLambda/AlarmTopic/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SNS::Subscription",
+                      "aws:cdk:cloudformation:props": {
+                        "endpoint": {
+                          "Fn::GetAtt": [
+                            "CleanerLambdaADF65AF3",
+                            "Arn"
+                          ]
+                        },
+                        "protocol": "lambda",
+                        "topicArn": {
+                          "Ref": "AlarmTopicD01E77F9"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sns.CfnSubscription",
+                      "version": "2.165.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.Subscription",
+                  "version": "2.165.0"
+                }
               }
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.165.0"
+            }
+          },
+          "AlarmTopic": {
+            "id": "AlarmTopic",
+            "path": "LoggingLambdaStack/AlarmTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "LoggingLambdaStack/AlarmTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.165.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
               "version": "2.165.0"
             }
           },
@@ -2496,19 +2545,17 @@
                   "aws:cdk:cloudformation:props": {
                     "alarmActions": [
                       {
-                        "Fn::GetAtt": [
-                          "CleanerLambdaADF65AF3",
-                          "Arn"
-                        ]
+                        "Ref": "AlarmTopicD01E77F9"
                       }
                     ],
                     "comparisonOperator": "GreaterThanOrEqualToThreshold",
                     "evaluationPeriods": 1,
                     "metricName": "TotalObjectSize",
                     "namespace": "Assignment4App",
-                    "period": 60,
+                    "period": 10,
                     "statistic": "Sum",
-                    "threshold": 15
+                    "threshold": 15,
+                    "treatMissingData": "notBreaching"
                   }
                 },
                 "constructInfo": {
